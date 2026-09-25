@@ -32,12 +32,13 @@ class DataIngestion:
             self.mongo_client=pymongo.MongoClient(MONGO_DB_URL)
             collection=self.mongo_client[database_name][collection_name]
 
+            #MongoDB automatically insert "_id" to act as primary key, this is nothing to do with traning our model, so remove it
             df=pd.DataFrame(list(collection.find()))
             if "_id" in df.columns.to_list():
                 df=df.drop(columns=["_id"])
-            
             df.replace({"na":np.nan},inplace=True)
             return df
+        
         except Exception as e:
             raise NetworkSecurityException(e,sys)
         
